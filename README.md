@@ -49,7 +49,7 @@ formData.appendFile(name, filepath);
 | 参数名 | 描述 |
 | :---------- | :-----------|
 | name | value中包含的数据对应的表单名称 |
-| value | 文件路径 | 
+| filepath | 文件路径 | 
 
 ### FormData.getData()
 #### 语法
