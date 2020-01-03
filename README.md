@@ -9,10 +9,11 @@ const FormData = require('./formData.js')
 ```
 new一个FormData对象
 ```js
-formData.append("name", "value");
+let formData = new FormData();
 ```
 调用它的[append()](#formdataappend)方法来添加字段或者调用[appendFile()](#formdataappendfile)方法添加文件
 ```js
+formData.append("name", "value");
 formData.appendFile("file", filepath);
 ```
 添加完成后调用它的[getData()](#formdatagetdata)生成上传数据，之后调用小程序的wx.request提交请求
