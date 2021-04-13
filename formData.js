@@ -12,7 +12,7 @@ function FormData(){
 
   this.appendFile = (name, path)=>{
     let buffer = fileManager.readFileSync(path);
-    if(Object.prototype.toString.call(buffer) !== "[object ArrayBuffer]"){
+    if(Object.prototype.toString.call(buffer).indexOf("ArrayBuffer") < 0){
       return false;
     }
     files.push({
