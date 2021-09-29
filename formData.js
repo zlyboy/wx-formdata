@@ -52,9 +52,7 @@ function convert(data, files){
   }
   //结尾
   let endBoundaryArray = [];
-  for (var i = 0; i < endBoundary.length; i++) { // 最后取出结束boundary的charCode
-    endBoundaryArray.push(...endBoundary.utf8CodeAt(i));
-  }
+  endBoundaryArray.push(...endBoundary.toUtf8Bytes());
   postArray = postArray.concat(endBoundaryArray);
   return {
     contentType: 'multipart/form-data; boundary=' + boundaryKey,
@@ -95,16 +93,14 @@ function formDataArray(boundary, name, value, fileName){
   }
 
   var dataArray = [];
-  for (var i = 0; i < dataString.length; i++) { // 取出文本的charCode（10进制）
-    dataArray.push(...dataString.utf8CodeAt(i));
-  }
+  dataArray.push(...dataString.toUtf8Bytes());
 
   if (isFile) {
     let fileArray = new Uint8Array(value);
     dataArray = dataArray.concat(Array.prototype.slice.call(fileArray));
   }
-  dataArray.push(..."\r".utf8CodeAt());
-  dataArray.push(..."\n".utf8CodeAt());
+  dataArray.push(..."\r".toUtf8Bytes());
+  dataArray.push(..."\n".toUtf8Bytes());
 
   return dataArray;
 }
@@ -113,6 +109,18 @@ function getFileMime(fileName){
   let idx = fileName.lastIndexOf(".");
   let mime = mimeMap[fileName.substr(idx)];
   return mime?mime:"application/octet-stream"
+}
+
+String.prototype.toUtf8Bytes = function(){
+  var str = this;
+  var bytes = [];
+  for (var i = 0; i < str.length; i++) {
+    bytes.push(...str.utf8CodeAt(i));
+    if (str.codePointAt(i) > 0xffff) {
+      i++;
+    }
+  }
+  return bytes;
 }
 
 String.prototype.utf8CodeAt = function(i) {
