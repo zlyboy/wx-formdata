@@ -1,0 +1,22 @@
+{
+  "name": "@zlyboy/wx-formdata",
+  "version": "1.0.1",
+  "description": "在微信小程序中使用formdata上传数据，可实现多文件上传",
+  "main": "formData.js",
+  "author": "zlyboy",
+  "bugs": {
+    "url": "https://github.com/zlyboy/wx-formdata/issues"
+  },
+  "homepage": "https://github.com/zlyboy/wx-formdata#readme",
+  "keywords": [
+    "小程序"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zlyboy/wx-formdata.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
