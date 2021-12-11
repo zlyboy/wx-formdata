@@ -1,6 +1,6 @@
 {
   "name": "@zlyboy/wx-formdata",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "在微信小程序中使用formdata上传数据，可实现多文件上传",
   "main": "formData.js",
   "author": "zlyboy",

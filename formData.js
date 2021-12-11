@@ -10,15 +10,20 @@ function FormData(){
     return true;
   }
 
-  this.appendFile = (name, path)=>{
+  this.appendFile = (name, path, fileName)=>{
     let buffer = fileManager.readFileSync(path);
     if(Object.prototype.toString.call(buffer).indexOf("ArrayBuffer") < 0){
       return false;
     }
+
+    if(!fileName){
+      fileName = getFileNameFromPath(path);
+    }
+
     files.push({
       name: name,
       buffer: buffer,
-      fileName: getFileNameFromPath(path)
+      fileName: fileName
     });
     return true;
   }

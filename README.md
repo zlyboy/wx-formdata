@@ -14,7 +14,7 @@ let formData = new FormData();
 调用它的[append()](#formdataappend)方法来添加字段或者调用[appendFile()](#formdataappendfile)方法添加文件
 ```js
 formData.append("name", "value");
-formData.appendFile("file", filepath);
+formData.appendFile("file", filepath, "文件名");
 ```
 添加完成后调用它的[getData()](#formdatagetdata)生成上传数据，之后调用小程序的wx.request提交请求
 ```js
@@ -43,13 +43,14 @@ formData.append(name, value);
 ### FormData.appendFile()
 #### 语法
 ```js
-formData.appendFile(name, filepath);
+formData.appendFile(name, filepath, fileName);
 ```
 #### 参数
 | 参数名 | 描述 |
 | :---------- | :-----------|
 | name | value中包含的数据对应的表单名称 |
 | filepath | 文件路径 | 
+| fileName | 文件名【可选】 | 
 
 ### FormData.getData()
 #### 语法
