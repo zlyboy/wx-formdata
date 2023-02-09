@@ -66,20 +66,10 @@ function convert(data, files){
 }
 
 function randString() {
-  let res = "";
-  for (let i = 0; i < 17; i++) {
-    let n = parseInt(Math.random() * 62);
-    if (n <= 9) {
-      res += n;
-    }
-    else if (n <= 35) {
-      res += String.fromCharCode(n + 55);
-    }
-    else {
-      res += String.fromCharCode(n + 61);
-    }
-  }
-  return res;
+  var result = '';
+  var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  for (var i = 17; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
 }
 
 function formDataArray(boundary, name, value, fileName){
