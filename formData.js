@@ -1,5 +1,7 @@
 const mimeMap = require('./mimeMap.js')
 
+const coder = new TextEncoder();
+
 function FormData(){
   let fileManager = wx.getFileSystemManager();
   let data = {};
@@ -45,23 +47,30 @@ function convert(data, files){
   //拼接参数
   if(data && Object.prototype.toString.call(data) == "[object Object]"){
     for(let key in data){
-      postArray = postArray.concat(formDataArray(boundary, key, data[key]));
+      postArray.push(...formDataArray(boundary, key, data[key]));
     }
   }
   //拼接文件
   if(files && Object.prototype.toString.call(files) == "[object Array]"){
     for(let i in files){
       let file = files[i];
-      postArray = postArray.concat(formDataArray(boundary, file.name, file.buffer, file.fileName));
+      postArray.push(...formDataArray(boundary, file.name, file.buffer, file.fileName));
     }
   }
   //结尾
-  let endBoundaryArray = [];
-  endBoundaryArray.push(...endBoundary.toUtf8Bytes());
-  postArray = postArray.concat(endBoundaryArray);
+  postArray.push(coder.encode(endBoundary));
+  const lenMap = postArray.map(e=>e.length);
+  const u8Arr = new Uint8Array(lenMap.reduce((p,c)=>p+c, 0));
+  let offset = 0;
+  postArray.forEach((d,i)=>{
+      if (i==0) u8Arr.set(d);
+      else u8Arr.set(d, offset);
+      offset += d.length;
+  });
+    
   return {
     contentType: 'multipart/form-data; boundary=' + boundaryKey,
-    buffer: new Uint8Array(postArray).buffer
+    buffer: u8Arr.buffer,
   }
 }
 
@@ -88,14 +97,13 @@ function formDataArray(boundary, name, value, fileName){
   }
 
   var dataArray = [];
-  dataArray.push(...dataString.toUtf8Bytes());
+  dataArray.push(coder.encode(dataString));
 
   if (isFile) {
-    let fileArray = new Uint8Array(value);
-    dataArray = dataArray.concat(Array.prototype.slice.call(fileArray));
+    dataArray.push(new Uint8Array(value));
   }
-  dataArray.push(..."\r".toUtf8Bytes());
-  dataArray.push(..."\n".toUtf8Bytes());
+  dataArray.push(coder.encode("\r"));
+  dataArray.push(coder.encode("\n"));
 
   return dataArray;
 }
@@ -105,45 +113,6 @@ function getFileMime(fileName){
   let mime = mimeMap[fileName.substr(idx)];
   return mime?mime:"application/octet-stream"
 }
-
-String.prototype.toUtf8Bytes = function(){
-  var str = this;
-  var bytes = [];
-  for (var i = 0; i < str.length; i++) {
-    bytes.push(...str.utf8CodeAt(i));
-    if (str.codePointAt(i) > 0xffff) {
-      i++;
-    }
-  }
-  return bytes;
-}
-
-String.prototype.utf8CodeAt = function(i) {
-  var str = this;
-  var out = [], p = 0;
-  var c = str.charCodeAt(i);
-  if (c < 128) {
-    out[p++] = c;
-  } else if (c < 2048) {
-    out[p++] = (c >> 6) | 192;
-    out[p++] = (c & 63) | 128;
-  } else if (
-      ((c & 0xFC00) == 0xD800) && (i + 1) < str.length &&
-      ((str.charCodeAt(i + 1) & 0xFC00) == 0xDC00)) {
-    // Surrogate Pair
-    c = 0x10000 + ((c & 0x03FF) << 10) + (str.charCodeAt(++i) & 0x03FF);
-    out[p++] = (c >> 18) | 240;
-    out[p++] = ((c >> 12) & 63) | 128;
-    out[p++] = ((c >> 6) & 63) | 128;
-    out[p++] = (c & 63) | 128;
-  } else {
-    out[p++] = (c >> 12) | 224;
-    out[p++] = ((c >> 6) & 63) | 128;
-    out[p++] = (c & 63) | 128;
-  }
-  return out;
-};
-
 
 module.exports = FormData;
 
